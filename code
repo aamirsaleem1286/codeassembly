@@ -1,0 +1,242 @@
+.data
+rows: .word 6
+z: .word 1
+star: .asciiz "*"
+dollar: .asciiz "$"
+space: .asciiz " "
+newLine: .asciiz "\n"
+.text
+.globl main
+main:
+lw $t0,rows
+lw $t1,z
+li $t2,0
+li $t5,2
+OuterLoop:
+beq $t2,$t0,exit
+add $t2,$t2,1
+li $v0,4
+la $a0,newLine
+syscall
+la $t3,($t2)
+la $t4,1
+innerloop:
+beq $t3,$t0,lastinner
+li $v0,4
+la $a0,space
+syscall
+add $t3,$t3,1
+b innerloop
+lastinner:
+bgt $t4,$t1,next
+div $t2,$t5
+mfhi $t6
+beq $t6,$zero,symbol
+li $v0,4
+la $a0,star
+syscall
+add $t4,$t4,1
+j lastinner
+symbol:
+li $v0,4
+la $a0,dollar
+syscall
+add $t4,$t4,1
+j lastinner
+la $a0,star
+li $v0,4
+syscall
+add $t4,$t4,1
+b lastinner
+next:
+add $t1,$t1,2
+b OuterLoop
+exit:
+li $v0, 10
+syscall
+
+
+
+//table
+.data
+msg1:.asciiz "Enter the table number : \n"
+msg2:.asciiz"\n"
+msg3:.asciiz" * "
+msg4:.asciiz" = "
+n1:.word 1 
+n2:.word 11
+
+.text
+li $t3,0
+lw $t1, n1
+lw $t2, n2
+
+li $v0,4
+la $a0, msg1
+syscall
+ 
+li $v0, 5 
+syscall
+move $t0, $v0
+
+loop:
+beq $t1, $t2, Exit
+
+bgt $t2 , $t1 , ifGreater
+ifGreater:
+mul $t3,$t0,$t1
+
+
+li $v0,1
+move $a0,$t0
+syscall
+
+li $v0,4
+la $a0, msg3
+syscall
+
+li $v0,1
+move $a0,$t1
+syscall
+
+li $v0,4
+la $a0, msg4
+syscall
+
+li $v0,1
+move $a0,$t3
+syscall
+
+
+li $v0,4
+la $a0, msg2
+syscall
+
+add $t1,$t1,1
+
+j loop
+
+Exit:
+li $v0, 10
+syscall
+
+
+
+
+// base
+.data
+	msg:.asciiz"Enter the base: "
+	msg1:.asciiz"Enter power: "
+.text
+	li $t2,0
+	li $t3,1
+ li $v0,4
+ la $a0,msg
+ syscall
+ 
+ li $v0,5
+ syscall
+ move $t0,$v0
+ 
+ li $v0,4
+ la $a0,msg1
+ syscall
+ 
+ li $v0,5
+ syscall
+ move $t1,$v0 
+ 
+ Loop:
+ 
+ beq $t2,$t1,Exit
+ mul $t3,$t3,$t0
+ add $t2,$t2,1
+ b Loop
+ Exit:
+ li $v0,1
+ move $a0,$t3
+ syscall
+ li $v0,10
+ syscall
+ 
+// fact
+ .data
+ n:.asciiz"Enter a number"
+ .text
+ li $v0,4
+ la $a0,n
+ syscall
+ li $v0,5
+ syscall
+ move $s0,$v0
+ 
+ Loop:
+ beq $s0,0,basecase
+ li $t1,1
+ move $t2,$s0
+ Fact:
+ mul $s0,$s0,$t1
+ add $t1,$t1,1
+ blt $t1,$t2,Fact
+ b output
+ basecase:
+ li $s0,1
+ output:
+ li $v0,1
+ move $a0,$s0
+ 
+ syscall
+ li $v0,10
+ syscall
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+binomial
+.data
+n:.asciiz"insert the value of n : "
+.text
+li $t0,0
+li $t1,1
+li $t6,1
+
+li $v0,4
+la $a0,n
+syscall
+
+li $v0,5
+syscall
+move $t4,$v0
+
+subi $t4,$t4,1
+
+OuterLooping:
+beq $t4,$t0,exit
+li $t2,0
+add $t2,$t2,$t4
+li $t3,0
+add $t3,$t3,$t4
+j InnerLooping
+
+InnerLooping:
+
+mul $t2,$t2,$t4
+subi $t3,$t3,1
+
+bgt $t3,$t1,InnerLooping
+
+add $t6,$t6,$t2
+subi $t4,$t4,1
+bgt $t4,$t0,OuterLooping
+j OuterLooping
+
+exit:
+li $v0, 1
+move $a0, $t6
+syscall
+
+li $v0,10
+syscall
